@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <!-- <div id="respuestas"></div> -->
+    <div id="ej1">
+    </div>
+    <div id="ej3"></div>
+</body>
+
+<script>
+
+function go()
+{
+    const div = document.getElementById('ej3'); //llamo al div 
+    div.innerHTML += 'Iniciando Consulta'; // le asigno texto 
+    let xml = new XMLHttpRequest() //instancio objeto 
+    
+    xml.open('POST','https://examenesutn.vercel.app/api/VehiculoAutoCamion'); // llamo al open
+    
+    xml.onreadystatechange = function(){ // le asigno un function al onreadystatechange
+        if(xml.readyState == 4) //valio usando el readystate
+        {
+            if(xml.status == 200) // valido usando el status
+            {
+                const data = JSON.parse(xml.responseText); //llamo al atributo responseText y lo paso a json
+                console.log(data);
+                const arr = Array.isArray(data) ? data : [data]; // itero la repsuesta pasada a json 
+                arr.forEach(e=>{
+                    div.innerHTML += '<br>' + JSON.stringify(e); //parseo a texto el js y lo asigno al div 
+                })
+            }
+        }
+    }
+    xml.send(JSON.stringify({
+        "modelo": "Fiat 100", 
+        "anoFabricacion": 1987, 
+        "velMax": 60, 
+        "cantidadPuertas": 4, 
+        "asientos": 4
+    })) // llamo al send, le paso el objet parseado con stringify. 
+}
+// go();
+
+function ejercicio1_xhr() {
+   const div = document.getElementById('ej1');
+    div.innerHTML += 'Iniciando Consulta';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://examenesutn.vercel.app/api/VehiculoAutoCamion');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                div.innerHTML += '<br>éxito';
+
+                JSON.parse(xhr.responseText).forEach(item => {
+                    div.innerHTML = JSON.stringify(item);
+                });
+
+            } else {
+                div.innerHTML += '<br>fracaso';
+                div.innerHTML += '<br>' + xhr.responseText;
+            }
+            div.innerHTML += '<br>Consulta Finalizada (1)';
+        }
+    };
+    xhr.send();
+}
+ejercicio1_xhr();
+</script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

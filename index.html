@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>Laboratorio 3</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="background-color: rgb(214, 172, 104);">
+    <div class="container mt-5 pt-5">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <table class="table table-bordered table-striped table-hover" id="tabla-index" style="opacity: 0.75;">
+                    <thead>
+                        <tr>
+                            <TH>Imagen</TH>
+                            <th>Raza</th>
+                            <th>SubRaza</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-primary btn-sm"id="btnAlta">ALTA</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Alta -->
+    <div class="modal fade" id="modalAlta" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-2" id="altaRaza" placeholder="Raza">
+                    <input type="text" class="form-control" id="altaSubraza" placeholder="Subraza">
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="btnConfirmarAlta">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label>Raza</label>
+                    <input type="text" class="form-control mb-2" id="editRaza" placeholder="Raza">
+                    <label>Subraza</label>
+                    <input type="text" class="form-control" id="editSubraza" placeholder="Subraza">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="btnConfirmarEditar">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Eliminar -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro que deseas eliminar <strong id="eliminarNombre"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<style>
+    
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('https://dog.ceo/api/breeds/list/all')
+    .then(data => data.json())
+    .then(data => {
+        const tbody = document.querySelector('#tabla-index tbody');
+        Object.entries(data.message).forEach(([raza, subrazas]) => {
+            console.log(data);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                    <td><img src="" alt="${raza}" width="80" height="80" style="object-fit:cover;border-radius:8px;"></td>
+                    <td>${raza}</td>
+                    <td>${subrazas.length > 0 ? subrazas.join(', ') : '-'}</td>
+                    <td>
+                        <button onclick="abrirEditar('${raza}', '${subrazas}')" class="btn btn-warning btn-sm">Editar</button>
+                        <button onclick="abrirEliminar('${raza}')" class="btn btn-danger btn-sm">Eliminar</button>
+                    </td>
+            `;
+            tbody.appendChild(tr);
+            fetch(`https://dog.ceo/api/breed/${raza}/images/random`)
+            .then(res => res.json())
+            .then(img => {
+                tr.querySelector('img').src = img.message;
+            });
+        });
+    })
+    .catch(err => console.error(err))
+    .finally();
+    });
+    // Alta
+    document.querySelector('#btnAlta').addEventListener('click', () => {
+        new bootstrap.Modal(document.getElementById('modalAlta')).show();
+    });
+
+
+    function abrirEditar(raza, subrazas) {
+        document.getElementById('editRaza').value = raza;
+        document.getElementById('editSubraza').value = subrazas;
+        new bootstrap.Modal(document.getElementById('modalEditar')).show();
+    }
+    
+
+    function abrirEliminar(raza) {
+        document.getElementById('eliminarNombre').textContent = raza;
+        new bootstrap.Modal(document.getElementById('modalEliminar')).show();
+    }
+
+    function setearListeners()
+    {
+        let modalAlta = document.getElementById('modalAlta');
+        modalAlta.addEventListener('submit',function(){
+            fetch('www.mipost.com.ar',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    raza: document.getElementById('altaRaza').value,
+                    subraza: document.getElementById('altaSubraza').value
+                })
+            })
+            .then(data=>data.json())
+            .then(data=>console.log(data))
+            .catch(error => console.log(error))
+            .finally(()=>console.log("Proceso de alta terminado"))
+        });
+        let modalEdit = document.getElementById('modalEditar');
+        modalEdit.addEventListener('submit',function(){
+            fetch('www.mipost.com.ar',{
+                method:'PUT',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    raza: document.getElementById('editRaza').value,
+                    subraza: document.getElementById('editSubraza').value
+                })
+            })
+            .then(data=>data.json())
+            .then(data=>console.log(data))
+            .catch(error => console.log(error))
+            .finally(()=>console.log("Proceso de edicion terminado"))
+        });
+        let modalEliminar = document.getElementById('modalEliminar');
+        modalEliminar.addEventListener('submit',function(){
+            fetch('www.mipost.com.ar',{method:'DELETE'})
+            .then(data=>data.json())
+            .then(data=>console.log(data))
+            .catch(error => console.log(error))
+            .finally(()=>console.log("Proceso de alta terminado"))
+        });
+    }
+
+</script>
+</body>
+</html>

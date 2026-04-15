@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <!-- <div id="respuestas"></div> -->
+    <div id="ej1"></div>
+</body>
+
+<script>
+
+
+// Ejercicio 1: (2pts)
+// Realizar las siguientes acciones en el orden especificado. Utilice el objeto XMLHttpRequest.
+// 1ro-Apendizar en el div con id="ej1" el texto "Iniciando Consulta".
+// 2do-Realice una consulta utilizando el método GET sobre el endpoint:
+// https://examenesutn.vercel.app/api/VehiculoAutoCamion
+// 3ro-En caso de que la consulta se resuelva exitosamente, Apendizar en el div con id="ej1" el texto "éxito" y los
+// elementos recibidos como resultado de la consulta. De lo contrario Apendizar en el div con id="ej1" el texto "fracaso" y
+// los elementos recibidos como resultado de la consulta.
+
+    function ejercicio1() {
+        const div = document.getElementById('ej1');
+        div.innerHTML += 'Iniciando Consulta';
+        let xhr = new XMLHttpRequest(); //se instancia
+
+
+        xhr.open('GET', 'https://examenesutn.vercel.app/api/VehiculoAutoCamion'); // se abre con el metodo y el url 
+        
+        // se setea el header para indicar que se espera una respuesta en formato JSON
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        
+        xhr.onreadystatechange = function () {
+            // en la funcion onreadystatchange se le asgigna la funcion
+            //  para el control de la respuesta
+            if (xhr.status === 200) {
+                //se llama al atributo status para validar el codigo de la respuesta 
+                div.innerHTML += '<br> éxito';
+                // se parsea con JSON.parse() el atributo responseText
+                const datos = JSON.parse(xhr.responseText);
+                datos.forEach(item => {
+                    //se parsea a json con JSON.stringify los items del json anterior 
+                    div.innerHTML += JSON.stringify(item) + '<br>';
+                });
+            } else {
+                div.innerHTML += ' <br> fracaso';
+                //se toma el texto de la respuesta de responseText para mostrar el error 
+                div.innerHTML += xhr.responseText;
+            }
+        };
+        //se envia la peticion ya armad con .send 
+        xhr.send();
+    }
+    ejercicio1();
+
+
+
+    function ejercicio1_ajax() {
+        const div = document.getElementById('ej1');
+        div.innerHTML += 'Iniciando Consulta';
+        $.ajax({
+            url:'',
+            method:'',
+            contentType:'',
+            success:function(datos){},
+            error:function(xhr){},
+            complete:function (){{   }}
+        });
+    }
+
+
+
+    function ejercicio1Fetch()
+    {
+        fetch('https://examenesutn.vercel.app/api/VehiculoAutoCamion',{
+            method:"GET",
+            headers:{"Content-type:aplication/json"},
+            // body:JSON.stringify('{'id':1}')
+        })
+        .then( data => data.json())
+        .then(data =>{
+            console.log(data);
+        })
+        .catch()
+        .finally()
+    }
+
+
+    ejercicio1Fetch();
+
+
+
+
+
+// $.ajax({
+//         url: URL,
+//         method: 'GET',
+//         contentType: 'application/json',
+//         success: function (datos) {
+//             div.innerHTML += '<br>éxito';
+//             datos.forEach(item => {
+//                 div.innerHTML += '<br>' + JSON.stringify(item);
+//             });
+//         },
+//         error: function (xhr) {
+//             div.innerHTML += '<br>fracaso';
+//             div.innerHTML += '<br>' + xhr.responseText;
+//         },
+//         complete: function () {
+//             div.innerHTML += '<br>Consulta Finalizada';
+//         }
+//     });
+
+
+
+
+
+
+
+
+    function insertarTexto(texo){
+        let div = document.getElementById("respuestas");
+        let p = document.createElement("p");
+        p.appendChild(document.createTextNode(texo));
+        div.appendChild(p);
+    }
+
+
+    var url = "https://examenesutn.vercel.app/api/VehiculoAutoCamion"
+
+    async function getFetch(){
+        let respuesta = await fetch(url,{
+            method:"GET"
+        })
+        let texto = await respuesta.text();
+        insertarTexto("Resultado getFech()");
+        insertarTexto(texto);
+    }
+
+    async function deleteFetch(){
+        let respuesta = await fetch(url,{
+            method:"DELETE", 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:('{"id":1}')
+        })
+        let texto = await respuesta.text();
+        insertarTexto("Resultado deleteFetch()");
+        insertarTexto(texto);
+    }
+
+    async function putFetch(){
+        let respuesta = await fetch(url,{
+            method:"PUT", 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:('{"id":122, "modelo":"Fiat 100","anoFabricacion":1987,"velMax":60,"cantidadPuertas":4,"asientos":4}')
+        })
+        let texto = await respuesta.text();
+        insertarTexto("Resultado putFetch() Con ID");
+        insertarTexto(texto);
+    }
+
+    async function putFetchFutbolista(){
+        let respuesta = await fetch(url,{
+            method:"PUT", 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:('{"modelo":"Chevy Silverado","anoFabricacion":1994,"velMax":80,"cantidadPuertas":1000,"asientos":450}')
+        })
+        let texto = await respuesta.text();
+        insertarTexto("Resultado putFetch() Sin ID");
+        insertarTexto(texto);
+    }
+
+    async function postFetch(){
+        let respuesta = await fetch(url,{
+            method:"POST", 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:('{"modelo":"Ford Mustang","anoFabricacion":1960,"velMax":100,"cantidadPuertas":2,"asientos":2}')
+        })
+        let texto = await respuesta.text();
+        insertarTexto("Resultado postFetch() Sin ID");
+        insertarTexto(texto);
+    }
+
+    async function postFetchFutbolista(){
+        let respuesta = await fetch(url,{
+            method:"POST", 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:('{"id":5,"modelo":"Dodge Ram","anoFabricacion":1970,"velMax":100,"cantidadPuertas":2333,"asientos":400}')
+        })
+        let texto = await respuesta.text();
+        insertarTexto("Resultado postFetch() Con ID");
+        insertarTexto(texto);
+    }
+
+    async function ejecutarPruebas(){
+        await getFetch();
+        await postFetch();
+        await postFetchFutbolista();
+        await putFetch();
+        await putFetchFutbolista();
+        await deleteFetch();
+    }
+
+    // ejecutarPruebas();
+
+
+</script>
+
+
+
+
+
+</html>

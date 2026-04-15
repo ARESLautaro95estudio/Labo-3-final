@@ -1,0 +1,418 @@
+const URL = 'https://examenesutn.vercel.app/api/VehiculoAutoCamion';
+
+// ===================== EJERCICIO 1 =====================
+// --- XHR (requerido por el enunciado) ---
+function ejercicio1_xhr() {
+    const div = document.getElementById('ej1');
+    div.innerHTML += 'Iniciando Consulta';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', URL);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                div.innerHTML += '<br>éxito';
+                JSON.parse(xhr.responseText).forEach(item => {
+                    div.innerHTML += '<br>' + JSON.stringify(item);
+                });
+            } else {
+                div.innerHTML += '<br>fracaso';
+                div.innerHTML += '<br>' + xhr.responseText;
+            }
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    };
+    xhr.send();
+}
+
+// --- Fetch sin async ---
+function ejercicio1_fetch() {
+    const div = document.getElementById('ej1');
+    div.innerHTML += 'Iniciando Consulta';
+
+    fetch(URL)
+        .then(response => {
+            if (response.ok) {
+                return response.json().then(datos => {
+                    div.innerHTML += '<br>éxito';
+                    datos.forEach(item => {
+                        div.innerHTML += '<br>' + JSON.stringify(item);
+                    });
+                });
+            } else {
+                return response.text().then(texto => {
+                    div.innerHTML += '<br>fracaso';
+                    div.innerHTML += '<br>' + texto;
+                });
+            }
+        })
+        .finally(() => {
+            div.innerHTML += '<br>Consulta Finalizada';
+        });
+}
+
+// --- $.ajax ---
+function ejercicio1_ajax() {
+    const div = document.getElementById('ej1');
+    div.innerHTML += 'Iniciando Consulta';
+
+    $.ajax({
+        url: URL,
+        method: 'GET',
+        contentType: 'application/json',
+        success: function (datos) {
+            div.innerHTML += '<br>éxito';
+            datos.forEach(item => {
+                div.innerHTML += '<br>' + JSON.stringify(item);
+            });
+        },
+        error: function (xhr) {
+            div.innerHTML += '<br>fracaso';
+            div.innerHTML += '<br>' + xhr.responseText;
+        },
+        complete: function () {
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    });
+}
+
+
+// ===================== EJERCICIO 2 =====================
+// --- XHR (requerido por el enunciado) ---
+function ejercicio2_xhr() {
+    const div = document.getElementById('ej2');
+    div.innerHTML += 'Iniciando Consulta';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', URL);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                const filtrados = JSON.parse(xhr.responseText)
+                    .filter(v => v.velMax > 80)
+                    .sort((a, b) => a.modelo.localeCompare(b.modelo));
+
+                filtrados.forEach(item => {
+                    div.innerHTML += '<br>' + JSON.stringify(item);
+                });
+            } else {
+                div.innerHTML += '<br>servicio no disponible';
+            }
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    };
+    xhr.send();
+}
+
+// --- Fetch sin async ---
+function ejercicio2_fetch() {
+    const div = document.getElementById('ej2');
+    div.innerHTML += 'Iniciando Consulta';
+
+    fetch(URL)
+        .then(response => {
+            if (response.ok) {
+                return response.json().then(datos => {
+                    datos.filter(v => v.velMax > 80)
+                        .sort((a, b) => a.modelo.localeCompare(b.modelo))
+                        .forEach(item => {
+                            div.innerHTML += '<br>' + JSON.stringify(item);
+                        });
+                });
+            } else {
+                div.innerHTML += '<br>servicio no disponible';
+            }
+        })
+        .finally(() => {
+            div.innerHTML += '<br>Consulta Finalizada';
+        });
+}
+
+// --- $.ajax ---
+function ejercicio2_ajax() {
+    const div = document.getElementById('ej2');
+    div.innerHTML += 'Iniciando Consulta';
+
+    $.ajax({
+        url: URL,
+        method: 'GET',
+        contentType: 'application/json',
+        success: function (datos) {
+            datos.filter(v => v.velMax > 80)
+                .sort((a, b) => a.modelo.localeCompare(b.modelo))
+                .forEach(item => {
+                    div.innerHTML += '<br>' + JSON.stringify(item);
+                });
+        },
+        error: function () {
+            div.innerHTML += '<br>servicio no disponible';
+        },
+        complete: function () {
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    });
+}
+
+
+// ===================== EJERCICIO 3 =====================
+const objEj3 = JSON.parse('{"modelo":"Fiat 100","anoFabricacion":1987,"velMax":60,"cantidadPuertas":4,"asientos":4}');
+
+// --- Fetch sin async (requerido por el enunciado) ---
+function ejercicio3_fetch() {
+    const div = document.getElementById('ej3');
+    div.innerHTML += 'Iniciando Consulta';
+
+    fetch(URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(objEj3)
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json().then(datos => {
+                    div.innerHTML += '<br>éxito';
+                    datos.forEach(item => {
+                        div.innerHTML += '<br>' + JSON.stringify(item);
+                    });
+                });
+            } else {
+                return response.text().then(texto => {
+                    div.innerHTML += '<br>fracaso';
+                    div.innerHTML += '<br>' + texto;
+                });
+            }
+        })
+        .finally(() => {
+            div.innerHTML += '<br>Consulta Finalizada';
+        });
+}
+
+// --- XHR ---
+function ejercicio3_xhr() {
+    const div = document.getElementById('ej3');
+    div.innerHTML += 'Iniciando Consulta';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', URL);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                div.innerHTML += '<br>éxito';
+                JSON.parse(xhr.responseText).forEach(item => {
+                    div.innerHTML += '<br>' + JSON.stringify(item);
+                });
+            } else {
+                div.innerHTML += '<br>fracaso';
+                div.innerHTML += '<br>' + xhr.responseText;
+            }
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    };
+    xhr.send(JSON.stringify(objEj3));
+}
+
+// --- $.ajax ---
+function ejercicio3_ajax() {
+    const div = document.getElementById('ej3');
+    div.innerHTML += 'Iniciando Consulta';
+
+    $.ajax({
+        url: URL,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(objEj3),
+        success: function (datos) {
+            div.innerHTML += '<br>éxito';
+            datos.forEach(item => {
+                div.innerHTML += '<br>' + JSON.stringify(item);
+            });
+        },
+        error: function (xhr) {
+            div.innerHTML += '<br>fracaso';
+            div.innerHTML += '<br>' + xhr.responseText;
+        },
+        complete: function () {
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    });
+}
+
+
+// ===================== EJERCICIO 4 =====================
+const objEj4 = JSON.parse('{"id":122,"modelo":"Fiat 100","anoFabricacion":1987,"velMax":60,"cantidadPuertas":4,"asientos":4}');
+
+// --- Fetch async (requerido por el enunciado) ---
+async function ejercicio4_fetch() {
+    const div = document.getElementById('ej4');
+    div.innerHTML += 'Iniciando Consulta';
+
+    try {
+        const response = await fetch(URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(objEj4)
+        });
+
+        if (response.ok) {
+            const datos = await response.json();
+            div.innerHTML += '<br>éxito';
+            datos.forEach(item => {
+                div.innerHTML += '<br>' + JSON.stringify(item);
+            });
+        } else {
+            const texto = await response.text();
+            div.innerHTML += '<br>fracaso';
+            div.innerHTML += '<br>' + texto;
+        }
+    } catch (e) {
+        div.innerHTML += '<br>fracaso';
+        div.innerHTML += '<br>' + e.message;
+    } finally {
+        div.innerHTML += '<br>Consulta Finalizada';
+    }
+}
+
+// --- XHR ---
+function ejercicio4_xhr() {
+    const div = document.getElementById('ej4');
+    div.innerHTML += 'Iniciando Consulta';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', URL);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                div.innerHTML += '<br>éxito';
+                JSON.parse(xhr.responseText).forEach(item => {
+                    div.innerHTML += '<br>' + JSON.stringify(item);
+                });
+            } else {
+                div.innerHTML += '<br>fracaso';
+                div.innerHTML += '<br>' + xhr.responseText;
+            }
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    };
+    xhr.send(JSON.stringify(objEj4));
+}
+
+// --- $.ajax ---
+function ejercicio4_ajax() {
+    const div = document.getElementById('ej4');
+    div.innerHTML += 'Iniciando Consulta';
+
+    $.ajax({
+        url: URL,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(objEj4),
+        success: function (datos) {
+            div.innerHTML += '<br>éxito';
+            datos.forEach(item => {
+                div.innerHTML += '<br>' + JSON.stringify(item);
+            });
+        },
+        error: function (xhr) {
+            div.innerHTML += '<br>fracaso';
+            div.innerHTML += '<br>' + xhr.responseText;
+        },
+        complete: function () {
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    });
+}
+
+
+// ===================== EJERCICIO 5 =====================
+const objEj5 = JSON.parse('{"id":1}');
+
+// --- Fetch async ---
+async function ejercicio5_fetch() {
+    const div = document.getElementById('ej5');
+    div.innerHTML += 'Iniciando Consulta';
+
+    try {
+        const response = await fetch(URL, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(objEj5)
+        });
+
+        if (response.ok) {
+            const datos = await response.json();
+            div.innerHTML += '<br>éxito';
+            datos.forEach(item => {
+                div.innerHTML += '<br>' + JSON.stringify(item);
+            });
+        } else {
+            const texto = await response.text();
+            div.innerHTML += '<br>fracaso';
+            div.innerHTML += '<br>' + texto;
+        }
+    } catch (e) {
+        div.innerHTML += '<br>fracaso';
+        div.innerHTML += '<br>' + e.message;
+    } finally {
+        div.innerHTML += '<br>Consulta Finalizada';
+    }
+}
+
+// --- XHR ---
+function ejercicio5_xhr() {
+    const div = document.getElementById('ej5');
+    div.innerHTML += 'Iniciando Consulta';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('DELETE', URL);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                div.innerHTML += '<br>éxito';
+                JSON.parse(xhr.responseText).forEach(item => {
+                    div.innerHTML += '<br>' + JSON.stringify(item);
+                });
+            } else {
+                div.innerHTML += '<br>fracaso';
+                div.innerHTML += '<br>' + xhr.responseText;
+            }
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    };
+    xhr.send(JSON.stringify(objEj5));
+}
+
+// --- $.ajax ---
+function ejercicio5_ajax() {
+    const div = document.getElementById('ej5');
+    div.innerHTML += 'Iniciando Consulta';
+
+    $.ajax({
+        url: URL,
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify(objEj5),
+        success: function (datos) {
+            div.innerHTML += '<br>éxito';
+            datos.forEach(item => {
+                div.innerHTML += '<br>' + JSON.stringify(item);
+            });
+        },
+        error: function (xhr) {
+            div.innerHTML += '<br>fracaso';
+            div.innerHTML += '<br>' + xhr.responseText;
+        },
+        complete: function () {
+            div.innerHTML += '<br>Consulta Finalizada';
+        }
+    });
+}
